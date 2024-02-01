@@ -9,22 +9,15 @@
 	let beat = 0;
 
 	//instantiate variable for instruments
-	let kick; //how to type as a tone js class?
+	let kick: Tone.MembraneSynth;
 
 	/** Responsible for looping based on tone's musical time and triggering sequence*/
-	function playSequencer() {
-		Tone.Transport.scheduleRepeat((time) => {
-			if (loop[beat]) {
-				kick.triggerAttackRelease('C1', '8n', time);
-			}
-			beat = beat === 7 ? 0 : beat + 1;
-		}, '8n');
-
+	function startSequencer() {
 		Tone.Transport.start();
 	}
 
 	/** Toggle value in sequencer*/
-	function setSequence(i) {
+	function setSequence(i: number) {
 		loop[i] = !loop[i];
 	}
 
@@ -35,6 +28,13 @@
 		interval = setInterval(() => {
 			Tone.context.resume();
 		}, 0);
+
+		Tone.Transport.scheduleRepeat((time) => {
+			if (loop[beat]) {
+				kick.triggerAttackRelease('C1', '8n', time);
+			}
+			beat = beat === 7 ? 0 : beat + 1;
+		}, '8n');
 	});
 
 	onDestroy(() => {
@@ -45,14 +45,12 @@
 <div class="flex flex-col items-center justify-center">
 	<div class="my-5 flex gap-5">
 		{#each loop as beat, i}
-			<button class="border-2 p-3" on:click={() => setSequence(i)}>
-				{#if beat}
-					X
-				{/if}
-				{i + 1}
-			</button>
+			<button
+				class="size-12 rounded-md border-2 {loop[i] ? 'bg-yellow-500' : ''}"
+				on:click={() => setSequence(i)}
+			/>
 		{/each}
 	</div>
-	<button on:click={playSequencer}> Start Sequence </button>
-	<button on:click={() => Tone.Transport.stop()}> Stop Sequence </button>
+	<button on:click={startSequencer}> Start Sequence </button>
+	<button on:click={() => Tone.Transport.pause()}> Pause Sequence </button>
 </div>

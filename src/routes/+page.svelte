@@ -9,6 +9,7 @@
 	.color-animation {
 		background: radial-gradient(blue, red);
 		background-size: 200% auto;
+		background-clip: text;
 		-webkit-background-clip: text;
 		color: transparent;
 		animation: move-gradient 2s linear infinite;
